@@ -1,6 +1,6 @@
 # PromptShield
 
-**PromptShield** is an enterprise AI security gateway that sits between applications and LLM providers like OpenAI, Claude, Gemini, and Ollama. It detects and redacts secrets, protects sensitive data
+**PromptShield** is an open-source prompt security library for AI applications. It inspects prompts before they reach Large Language Models (LLMs), detects secrets and sensitive information, applies configurable security policies, and returns a sanitized prompt that can be safely sent to providers such as OpenAI, Claude, Gemini, and Ollama.
 
 ```bash
                PromptShield

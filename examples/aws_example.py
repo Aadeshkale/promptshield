@@ -10,11 +10,32 @@ from promptshield import PromptShield
 shield = PromptShield()
 
 text = """
-Deploy Terraform
+Connect to my S3 bucket using these temporary AWS credentials.
+AWS_ACCESS_KEY_ID=ASIAIOSFODNN7EXAMPLE
+AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+AWS_SESSION_TOKEN=IQoJb3JpZ2luX2VjEJr//////////wEaCXVzLWVhc3QtMSJGMEQCIAEXAMPLETOKEN1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ==
+List all objects in the bucket.
 
-AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+I accidentally pasted my AWS credentials here.
 
-Done.
+Access Key:
+AKIAIOSFODNN7EXAMPLE
+
+Secret Key:
+wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+
+Can you use these to check my EC2 instances?
+
+{
+  "provider": "aws",
+  "credentials": {
+    "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+    "secretAccessKey": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+    "sessionToken": "IQoJb3JpZ2luX2VjEJr//////////wEaCXVzLWVhc3QtMSJGMEQCIAEXAMPLETOKEN1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ=="
+  },
+  "region": "us-east-1"
+}
+
 """
 
 result = shield.scan(text)

@@ -1,3 +1,11 @@
+"""
+Azure Pattern Detectors.
+
+Stage 1: Pure regex matchers for Azure client secrets, storage keys,
+and subscription IDs.
+Return Candidate objects for classification in later stages.
+"""
+
 import re
 
 from promptshield.detectors.base import BaseDetector

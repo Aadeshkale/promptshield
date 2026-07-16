@@ -1,3 +1,10 @@
+"""
+OpenAI Pattern Detectors.
+
+Stage 1: Pure regex matchers for OpenAI API keys and Project API keys.
+Return Candidate objects for classification in later stages.
+"""
+
 import re
 
 from promptshield.detectors.base import BaseDetector

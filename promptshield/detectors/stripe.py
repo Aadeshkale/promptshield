@@ -1,3 +1,11 @@
+"""
+Stripe Pattern Detectors.
+
+Stage 1: Pure regex matchers for Stripe secret keys, publishable keys,
+and webhook secrets.
+Return Candidate objects for classification in later stages.
+"""
+
 import re
 
 from promptshield.detectors.base import BaseDetector

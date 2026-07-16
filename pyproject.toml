@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "promptshield"
 version = "0.1.0"
-description = "Enterprise AI security gateway"
+description = "prompt security library for AI applications. It inspects prompts before they reach Large Language Models (LLMs), detects secrets and sensitive information, applies configurable security policies, and returns a sanitized prompt that can be safely sent to providers such as OpenAI, Claude, Gemini, and Ollama"
 requires-python = ">=3.10"
 
 [tool.setuptools.packages.find]

@@ -1,3 +1,11 @@
+"""
+Hardcoded Credential Pattern Detectors.
+
+Stage 1: Pure regex matchers for password assignments, username
+assignments, and basic auth URLs.
+Return Candidate objects for classification in later stages.
+"""
+
 import re
 
 from promptshield.detectors.base import BaseDetector

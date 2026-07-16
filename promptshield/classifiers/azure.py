@@ -1,3 +1,9 @@
+"""
+Azure Classifier.
+
+Classifies Azure-related candidates based on pattern + context.
+"""
+
 from promptshield.classifiers import BaseClassifier
 from promptshield.models import Candidate, Context, Finding
 

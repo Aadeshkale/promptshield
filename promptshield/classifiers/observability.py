@@ -1,3 +1,10 @@
+"""
+Observability Classifier.
+
+Classifies Datadog, New Relic, and Sentry candidates.
+Datadog keys require context keywords (32/40-char patterns are ambiguous).
+"""
+
 from promptshield.classifiers import BaseClassifier
 from promptshield.models import Candidate, Context, Finding
 

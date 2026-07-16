@@ -1,3 +1,9 @@
+"""
+Slack Classifier.
+
+Classifies Slack bot token, user token, and webhook candidates.
+"""
+
 from promptshield.classifiers import BaseClassifier
 from promptshield.models import Candidate, Context, Finding
 

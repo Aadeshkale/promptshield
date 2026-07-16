@@ -1,3 +1,10 @@
+"""
+NPM Classifier.
+
+Classifies NPM access token candidates.
+Requires context keywords to avoid false positives.
+"""
+
 from promptshield.classifiers import BaseClassifier
 from promptshield.models import Candidate, Context, Finding
 

@@ -1,3 +1,10 @@
+"""
+Stripe Classifier.
+
+Classifies Stripe secret key, publishable key, and webhook secret candidates.
+Publishable keys require context keywords (pk_live/pk_test pattern is ambiguous).
+"""
+
 from promptshield.classifiers import BaseClassifier
 from promptshield.models import Candidate, Context, Finding
 

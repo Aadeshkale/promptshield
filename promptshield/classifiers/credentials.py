@@ -1,3 +1,9 @@
+"""
+Credentials Classifier.
+
+Classifies hardcoded password/username/basic auth candidates.
+"""
+
 from promptshield.classifiers import BaseClassifier
 from promptshield.models import Candidate, Context, Finding
 

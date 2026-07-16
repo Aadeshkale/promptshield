@@ -1,3 +1,9 @@
+"""
+SSH Classifier.
+
+Classifies SSH private key candidates (PEM format).
+"""
+
 from promptshield.classifiers import BaseClassifier
 from promptshield.models import Candidate, Context, Finding
 

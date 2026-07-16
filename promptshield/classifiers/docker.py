@@ -1,3 +1,10 @@
+"""
+Docker Classifier.
+
+Classifies Docker PAT and Hub token candidates.
+Hub tokens require context keywords (UUID format is ambiguous).
+"""
+
 from promptshield.classifiers import BaseClassifier
 from promptshield.models import Candidate, Context, Finding
 

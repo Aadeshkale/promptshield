@@ -1,3 +1,10 @@
+"""
+Heroku Classifier.
+
+Classifies Heroku API key candidates.
+Requires context keywords (UUID format is ambiguous).
+"""
+
 from promptshield.classifiers import BaseClassifier
 from promptshield.models import Candidate, Context, Finding
 

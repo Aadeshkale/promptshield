@@ -1,3 +1,9 @@
+"""
+GitHub Classifier.
+
+Classifies GitHub token and SSH key candidates.
+"""
+
 from promptshield.classifiers import BaseClassifier
 from promptshield.models import Candidate, Context, Finding
 

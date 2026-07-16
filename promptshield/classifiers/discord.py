@@ -1,3 +1,9 @@
+"""
+Discord Classifier.
+
+Classifies Discord bot token candidates.
+"""
+
 from promptshield.classifiers import BaseClassifier
 from promptshield.models import Candidate, Context, Finding
 

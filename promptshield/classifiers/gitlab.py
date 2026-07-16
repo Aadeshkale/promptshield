@@ -1,3 +1,9 @@
+"""
+GitLab Classifier.
+
+Classifies GitLab personal token, runner token, and OAuth token candidates.
+"""
+
 from promptshield.classifiers import BaseClassifier
 from promptshield.models import Candidate, Context, Finding
 

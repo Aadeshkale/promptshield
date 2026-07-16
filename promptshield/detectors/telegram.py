@@ -1,3 +1,10 @@
+"""
+Telegram Pattern Detector.
+
+Stage 1: Pure regex matcher for Telegram bot tokens.
+Return Candidate objects for classification in later stages.
+"""
+
 import re
 
 from promptshield.detectors.base import BaseDetector

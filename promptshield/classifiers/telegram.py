@@ -1,3 +1,9 @@
+"""
+Telegram Classifier.
+
+Classifies Telegram bot token candidates.
+"""
+
 from promptshield.classifiers import BaseClassifier
 from promptshield.models import Candidate, Context, Finding
 

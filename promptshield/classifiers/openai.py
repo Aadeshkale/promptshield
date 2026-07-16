@@ -1,3 +1,9 @@
+"""
+OpenAI Classifier.
+
+Classifies OpenAI API key and Project API key candidates.
+"""
+
 from promptshield.classifiers import BaseClassifier
 from promptshield.models import Candidate, Context, Finding
 

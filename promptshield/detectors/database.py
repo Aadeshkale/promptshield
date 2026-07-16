@@ -1,3 +1,11 @@
+"""
+Database Connection String Pattern Detector.
+
+Stage 1: Pure regex matcher for database connection strings
+containing embedded credentials (postgres://, mysql://, mongodb+srv://, redis://).
+Return Candidate objects for classification in later stages.
+"""
+
 import re
 
 from promptshield.detectors.base import BaseDetector

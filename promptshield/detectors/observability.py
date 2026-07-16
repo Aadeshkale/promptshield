@@ -1,3 +1,11 @@
+"""
+Observability Service Pattern Detectors.
+
+Stage 1: Pure regex matchers for Datadog API/App keys, New Relic
+API keys, and Sentry DSNs.
+Return Candidate objects for classification in later stages.
+"""
+
 import re
 
 from promptshield.detectors.base import BaseDetector

@@ -1,3 +1,10 @@
+"""
+Twilio Classifier.
+
+Classifies Twilio Account SID and Auth Token candidates.
+Requires context keywords (AC+32hex / SK+32hex patterns are ambiguous).
+"""
+
 from promptshield.classifiers import BaseClassifier
 from promptshield.models import Candidate, Context, Finding
 

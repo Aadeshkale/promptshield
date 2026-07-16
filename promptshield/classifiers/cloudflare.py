@@ -1,3 +1,10 @@
+"""
+Cloudflare Classifier.
+
+Classifies Cloudflare-related candidates based on pattern + context.
+Requires context keywords to avoid false positives on 37/40-char tokens.
+"""
+
 from promptshield.classifiers import BaseClassifier
 from promptshield.models import Candidate, Context, Finding
 

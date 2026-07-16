@@ -1,3 +1,10 @@
+"""
+SSH Private Key Pattern Detector.
+
+Stage 1: Pure regex matcher for PEM-format private keys (RSA, DSA, EC, OpenSSH).
+Return Candidate objects for classification in later stages.
+"""
+
 import re
 
 from promptshield.detectors.base import BaseDetector

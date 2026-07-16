@@ -1,3 +1,10 @@
+"""
+Discord Pattern Detector.
+
+Stage 1: Pure regex matcher for Discord bot tokens.
+Return Candidate objects for classification in later stages.
+"""
+
 import re
 
 from promptshield.detectors.base import BaseDetector

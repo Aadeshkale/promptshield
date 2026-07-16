@@ -5,6 +5,14 @@ Stage 1: Pure regex matchers.
 Return Candidate objects for classification in later stages.
 """
 
+"""
+AWS Pattern Detectors.
+
+Stage 1: Pure regex matchers for AWS access keys, secret keys,
+session tokens, and temporary credentials.
+Return Candidate objects for classification in later stages.
+"""
+
 import re
 
 from promptshield.detectors.base import BaseDetector

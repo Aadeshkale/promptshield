@@ -1,3 +1,10 @@
+"""
+Cloudflare Pattern Detectors.
+
+Stage 1: Pure regex matchers for Cloudflare API keys and API tokens.
+Return Candidate objects for classification in later stages.
+"""
+
 import re
 
 from promptshield.detectors.base import BaseDetector

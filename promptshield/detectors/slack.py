@@ -1,3 +1,11 @@
+"""
+Slack Pattern Detectors.
+
+Stage 1: Pure regex matchers for Slack bot tokens, user tokens,
+and webhook URLs.
+Return Candidate objects for classification in later stages.
+"""
+
 import re
 
 from promptshield.detectors.base import BaseDetector

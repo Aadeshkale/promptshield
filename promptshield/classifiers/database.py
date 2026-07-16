@@ -1,3 +1,9 @@
+"""
+Database Connection String Classifier.
+
+Classifies database connection string candidates containing embedded credentials.
+"""
+
 from promptshield.classifiers import BaseClassifier
 from promptshield.models import Candidate, Context, Finding
 

@@ -4,18 +4,22 @@ from promptshield.detectors.base import BaseDetector
 from promptshield.models import Candidate
 
 
-class BitbucketAppPasswordDetector(BaseDetector):
+class CloudflareGlobalAPIKeyDetector(BaseDetector):
 
     PATTERN = re.compile(
-        r"[A-Za-z0-9]{8}-[A-Za-z0-9]{8}-[A-Za-z0-9]{8}-[A-Za-z0-9]{8}"
+        r"\b[A-Za-z0-9]{37}\b"
     )
-    PATTERN_NAME = "BITBUCKET_APP_PASSWORD"
+    PATTERN_NAME = "CLOUDFLARE_GLOBAL_API_KEY"
 
     def detect(self, text):
         candidates = []
         for match in self.PATTERN.finditer(text):
             value = match.group()
-            if all(c == value[0] for c in value.replace("-", "")):
+            if all(c == value[0] for c in value):
+                continue
+            if value.lower() == value and value.isalpha():
+                continue
+            if all(c.isdigit() for c in value):
                 continue
             candidates.append(
                 Candidate(
@@ -28,14 +32,12 @@ class BitbucketAppPasswordDetector(BaseDetector):
         return candidates
 
 
-class BitbucketOAuthConsumerKeyDetector(BaseDetector):
+class CloudflareAPITokenDetector(BaseDetector):
 
     PATTERN = re.compile(
-        r"\b[A-Za-z0-9]{32}\b"
+        r"\b[A-Za-z0-9_-]{40}\b"
     )
-    PATTERN_NAME = "BITBUCKET_OAUTH_KEY"
-    PEM_MARKERS = {"MII", "MIID", "MIIE", "MIIF", "MIIG", "MIH", "MIII",
-                   "AAAA", "AAAAB", "AAAAC", "AAAAD"}
+    PATTERN_NAME = "CLOUDFLARE_API_TOKEN"
 
     def detect(self, text):
         candidates = []
@@ -45,14 +47,9 @@ class BitbucketOAuthConsumerKeyDetector(BaseDetector):
                 continue
             if value.lower() == value and value.isalpha():
                 continue
-            if all(c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" for c in value):
+            if all(c.isdigit() for c in value):
                 continue
-            if value[:4] in self.PEM_MARKERS or value[:5] in self.PEM_MARKERS:
-                continue
-            if all(c in "0123456789abcdef" for c in value.lower()):
-                continue
-            lower_count = sum(1 for c in value if c.islower())
-            if lower_count > 20:
+            if "_" not in value and "-" not in value:
                 continue
             candidates.append(
                 Candidate(

@@ -13,6 +13,17 @@ from promptshield.detectors.bitbucket import (
     BitbucketAppPasswordDetector,
     BitbucketOAuthConsumerKeyDetector,
 )
+from promptshield.detectors.cloudflare import (
+    CloudflareGlobalAPIKeyDetector,
+    CloudflareAPITokenDetector,
+)
+from promptshield.detectors.credentials import (
+    PasswordAssignmentDetector,
+    UsernameAssignmentDetector,
+    BasicAuthURLDetector,
+)
+from promptshield.detectors.database import DatabaseConnectionStringDetector
+from promptshield.detectors.discord import DiscordBotTokenDetector
 from promptshield.detectors.docker import (
     DockerPATDetector,
     DockerHubTokenDetector,
@@ -33,6 +44,18 @@ from promptshield.detectors.gitlab import (
     GitLabRunnerTokenDetector,
     GitLabOTokenDetector,
 )
+from promptshield.detectors.heroku import HerokuAPIKeyDetector
+from promptshield.detectors.npm import NPMAccessTokenDetector
+from promptshield.detectors.observability import (
+    DatadogAPIKeyDetector,
+    DatadogAppKeyDetector,
+    NewRelicAPIKeyDetector,
+    SentryDSNDetector,
+)
+from promptshield.detectors.openai import (
+    OpenAIAPIDetector,
+    OpenAIProjectAPIDetector,
+)
 from promptshield.detectors.slack import (
     SlackBotTokenDetector,
     SlackUserTokenDetector,
@@ -50,6 +73,10 @@ from promptshield.detectors.tokens import (
     BearerTokenDetector,
     OAuthTokenDetector,
 )
+from promptshield.detectors.twilio import (
+    TwilioAccountSIDDetector,
+    TwilioAuthTokenDetector,
+)
 from promptshield.scanner import Scanner
 
 
@@ -66,6 +93,15 @@ class PromptShield:
                 AzureClientSecretDetector(),
                 AzureStorageAccountKeyDetector(),
                 AzureSubscriptionIdDetector(),
+                CloudflareGlobalAPIKeyDetector(),
+                CloudflareAPITokenDetector(),
+                PasswordAssignmentDetector(),
+                UsernameAssignmentDetector(),
+                BasicAuthURLDetector(),
+                DatabaseConnectionStringDetector(),
+                DiscordBotTokenDetector(),
+                DockerPATDetector(),
+                DockerHubTokenDetector(),
                 GCPAPIKeyDetector(),
                 GCPOAuthSecretDetector(),
                 GCPServiceAccountKeyDetector(),
@@ -76,10 +112,16 @@ class PromptShield:
                 GitLabTokenDetector(),
                 GitLabRunnerTokenDetector(),
                 GitLabOTokenDetector(),
+                HerokuAPIKeyDetector(),
+                NPMAccessTokenDetector(),
+                DatadogAPIKeyDetector(),
+                DatadogAppKeyDetector(),
+                NewRelicAPIKeyDetector(),
+                SentryDSNDetector(),
+                OpenAIAPIDetector(),
+                OpenAIProjectAPIDetector(),
                 BitbucketAppPasswordDetector(),
                 BitbucketOAuthConsumerKeyDetector(),
-                DockerPATDetector(),
-                DockerHubTokenDetector(),
                 SlackBotTokenDetector(),
                 SlackUserTokenDetector(),
                 SlackWebhookDetector(),
@@ -88,6 +130,8 @@ class PromptShield:
                 StripePublishableKeyDetector(),
                 StripeWebhookSecretDetector(),
                 TelegramBotTokenDetector(),
+                TwilioAccountSIDDetector(),
+                TwilioAuthTokenDetector(),
                 JWTTokenDetector(),
                 BearerTokenDetector(),
                 OAuthTokenDetector(),

@@ -51,6 +51,7 @@ class AWSSecretKeyDetector(BaseDetector):
     PATTERN_NAME = "SECRET_KEY"
     EXCLUDE_PREFIXES = ["AIza", "ya29", "GOCSPX"]
     TOKEN_PREFIXES = ["ghp_", "gho_", "ghu_", "ghs_", "ghr_", "glpat-", "glrt-", "gloas-", "dckr_pat_"]
+    EXCLUDE_START_WITH = ["CLOUDFLARE"]
 
     def detect(self, text):
         candidates = []
@@ -59,6 +60,8 @@ class AWSSecretKeyDetector(BaseDetector):
             if all(c in "=/+" for c in value):
                 continue
             if any(value.startswith(prefix) for prefix in self.EXCLUDE_PREFIXES):
+                continue
+            if any(keyword in text[max(0, match.start() - 20):match.end() + 10] for keyword in self.EXCLUDE_START_WITH):
                 continue
             start = match.start()
             for prefix in self.TOKEN_PREFIXES:

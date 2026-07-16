@@ -25,16 +25,25 @@ from promptshield.context import ContextEnricher
 from promptshield.classifiers.aws import AWSClassifier
 from promptshield.classifiers.azure import AzureClassifier
 from promptshield.classifiers.bitbucket import BitbucketClassifier
+from promptshield.classifiers.cloudflare import CloudflareClassifier
+from promptshield.classifiers.credentials import CredentialsClassifier
+from promptshield.classifiers.database import DatabaseClassifier
+from promptshield.classifiers.discord import DiscordClassifier
 from promptshield.classifiers.docker import DockerClassifier
 from promptshield.classifiers.gcp import GCPClassifier
 from promptshield.classifiers.generic import GenericClassifier
 from promptshield.classifiers.github import GitHubClassifier
 from promptshield.classifiers.gitlab import GitLabClassifier
+from promptshield.classifiers.heroku import HerokuClassifier
+from promptshield.classifiers.npm import NPMClassifier
 from promptshield.classifiers.oauth import OAuthClassifier
+from promptshield.classifiers.observability import ObservabilityClassifier
+from promptshield.classifiers.openai import OpenAIClassifier
 from promptshield.classifiers.slack import SlackClassifier
 from promptshield.classifiers.ssh import SSHClassifier
 from promptshield.classifiers.stripe import StripeClassifier
 from promptshield.classifiers.telegram import TelegramClassifier
+from promptshield.classifiers.twilio import TwilioClassifier
 from promptshield.models import ScanResult
 from promptshield.policies.default import DefaultPolicy
 from promptshield.redactors.default import DefaultRedactor
@@ -52,11 +61,20 @@ class Scanner:
             GitHubClassifier(),
             GitLabClassifier(),
             BitbucketClassifier(),
+            CloudflareClassifier(),
+            CredentialsClassifier(),
+            DatabaseClassifier(),
+            DiscordClassifier(),
             DockerClassifier(),
+            HerokuClassifier(),
+            NPMClassifier(),
+            ObservabilityClassifier(),
+            OpenAIClassifier(),
             SlackClassifier(),
             SSHClassifier(),
             StripeClassifier(),
             TelegramClassifier(),
+            TwilioClassifier(),
             OAuthClassifier(),
             GenericClassifier(),
         ]

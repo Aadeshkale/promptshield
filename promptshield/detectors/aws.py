@@ -50,6 +50,7 @@ class AWSSecretKeyDetector(BaseDetector):
     PATTERN = re.compile(r"(?<![A-Za-z0-9])[A-Za-z0-9/+=]{40}(?![A-Za-z0-9])")
     PATTERN_NAME = "SECRET_KEY"
     EXCLUDE_PREFIXES = ["AIza", "ya29", "GOCSPX"]
+    TOKEN_PREFIXES = ["ghp_", "gho_", "ghu_", "ghs_", "ghr_", "glpat-", "glrt-", "gloas-", "dckr_pat_"]
 
     def detect(self, text):
         candidates = []
@@ -59,14 +60,19 @@ class AWSSecretKeyDetector(BaseDetector):
                 continue
             if any(value.startswith(prefix) for prefix in self.EXCLUDE_PREFIXES):
                 continue
-            candidates.append(
-                Candidate(
-                    value=value,
-                    start=match.start(),
-                    end=match.end(),
-                    pattern_name=self.PATTERN_NAME,
+            start = match.start()
+            for prefix in self.TOKEN_PREFIXES:
+                if start >= len(prefix) and text[start - len(prefix):start] == prefix:
+                    break
+            else:
+                candidates.append(
+                    Candidate(
+                        value=value,
+                        start=start,
+                        end=match.end(),
+                        pattern_name=self.PATTERN_NAME,
+                    )
                 )
-            )
         return candidates
 
 

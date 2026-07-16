@@ -4,6 +4,19 @@ from promptshield.detectors.aws import (
     AWSSecretKeyDetector,
     AWSSessionTokenDetector,
 )
+from promptshield.detectors.azure import (
+    AzureClientSecretDetector,
+    AzureStorageAccountKeyDetector,
+    AzureSubscriptionIdDetector,
+)
+from promptshield.detectors.bitbucket import (
+    BitbucketAppPasswordDetector,
+    BitbucketOAuthConsumerKeyDetector,
+)
+from promptshield.detectors.docker import (
+    DockerPATDetector,
+    DockerHubTokenDetector,
+)
 from promptshield.detectors.gcp import (
     GCPAPIKeyDetector,
     GCPOAuthSecretDetector,
@@ -11,6 +24,27 @@ from promptshield.detectors.gcp import (
     GCPOAuthAccessTokenDetector,
     GCPRefreshTokenDetector,
 )
+from promptshield.detectors.github import (
+    GitHubTokenDetector,
+    GitHubSSHKeyDetector,
+)
+from promptshield.detectors.gitlab import (
+    GitLabTokenDetector,
+    GitLabRunnerTokenDetector,
+    GitLabOTokenDetector,
+)
+from promptshield.detectors.slack import (
+    SlackBotTokenDetector,
+    SlackUserTokenDetector,
+    SlackWebhookDetector,
+)
+from promptshield.detectors.ssh import SSHPrivateKeyDetector
+from promptshield.detectors.stripe import (
+    StripeSecretKeyDetector,
+    StripePublishableKeyDetector,
+    StripeWebhookSecretDetector,
+)
+from promptshield.detectors.telegram import TelegramBotTokenDetector
 from promptshield.detectors.tokens import (
     JWTTokenDetector,
     BearerTokenDetector,
@@ -29,11 +63,31 @@ class PromptShield:
                 AWSTemporaryKeyDetector(),
                 AWSSecretKeyDetector(),
                 AWSSessionTokenDetector(),
+                AzureClientSecretDetector(),
+                AzureStorageAccountKeyDetector(),
+                AzureSubscriptionIdDetector(),
                 GCPAPIKeyDetector(),
                 GCPOAuthSecretDetector(),
                 GCPServiceAccountKeyDetector(),
                 GCPOAuthAccessTokenDetector(),
                 GCPRefreshTokenDetector(),
+                GitHubTokenDetector(),
+                GitHubSSHKeyDetector(),
+                GitLabTokenDetector(),
+                GitLabRunnerTokenDetector(),
+                GitLabOTokenDetector(),
+                BitbucketAppPasswordDetector(),
+                BitbucketOAuthConsumerKeyDetector(),
+                DockerPATDetector(),
+                DockerHubTokenDetector(),
+                SlackBotTokenDetector(),
+                SlackUserTokenDetector(),
+                SlackWebhookDetector(),
+                SSHPrivateKeyDetector(),
+                StripeSecretKeyDetector(),
+                StripePublishableKeyDetector(),
+                StripeWebhookSecretDetector(),
+                TelegramBotTokenDetector(),
                 JWTTokenDetector(),
                 BearerTokenDetector(),
                 OAuthTokenDetector(),

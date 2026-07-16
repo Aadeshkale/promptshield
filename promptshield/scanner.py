@@ -22,10 +22,19 @@ ScanResult
 """
 
 from promptshield.context import ContextEnricher
-from promptshield.classifiers.gcp import GCPClassifier
 from promptshield.classifiers.aws import AWSClassifier
-from promptshield.classifiers.oauth import OAuthClassifier
+from promptshield.classifiers.azure import AzureClassifier
+from promptshield.classifiers.bitbucket import BitbucketClassifier
+from promptshield.classifiers.docker import DockerClassifier
+from promptshield.classifiers.gcp import GCPClassifier
 from promptshield.classifiers.generic import GenericClassifier
+from promptshield.classifiers.github import GitHubClassifier
+from promptshield.classifiers.gitlab import GitLabClassifier
+from promptshield.classifiers.oauth import OAuthClassifier
+from promptshield.classifiers.slack import SlackClassifier
+from promptshield.classifiers.ssh import SSHClassifier
+from promptshield.classifiers.stripe import StripeClassifier
+from promptshield.classifiers.telegram import TelegramClassifier
 from promptshield.models import ScanResult
 from promptshield.policies.default import DefaultPolicy
 from promptshield.redactors.default import DefaultRedactor
@@ -39,6 +48,15 @@ class Scanner:
         self.classifiers = [
             GCPClassifier(),
             AWSClassifier(),
+            AzureClassifier(),
+            GitHubClassifier(),
+            GitLabClassifier(),
+            BitbucketClassifier(),
+            DockerClassifier(),
+            SlackClassifier(),
+            SSHClassifier(),
+            StripeClassifier(),
+            TelegramClassifier(),
             OAuthClassifier(),
             GenericClassifier(),
         ]

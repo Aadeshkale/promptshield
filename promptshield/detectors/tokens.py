@@ -1,88 +1,72 @@
 """
-OAuth / JWT secret detectors.
+Token Pattern Detectors.
 
-Detects:
-  JWT Token            eyJhbGci... (three-part base64url)
-  Bearer Token         Bearer <token>
-  Generic OAuth Token  OAuth <token>
+Stage 1: Pure regex matchers.
+Return Candidate objects for classification in later stages.
 """
 
 import re
 
-from promptshield.models import Finding
 from promptshield.detectors.base import BaseDetector
+from promptshield.models import Candidate
 
 
 class JWTTokenDetector(BaseDetector):
 
-    NAME = "oauth"
     PATTERN = re.compile(
         r"eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}"
     )
+    PATTERN_NAME = "eyJ"
 
     def detect(self, text):
-        findings = []
-
-        for match in self.PATTERN.finditer(text):
-            findings.append(
-                Finding(
-                    detector=self.NAME,
-                    secret_type="JWT_TOKEN",
-                    value=match.group(),
-                    start=match.start(),
-                    end=match.end(),
-                    replacement="<JWT_TOKEN>",
-                )
+        return [
+            Candidate(
+                value=match.group(),
+                start=match.start(),
+                end=match.end(),
+                pattern_name=self.PATTERN_NAME,
             )
-
-        return findings
+            for match in self.PATTERN.finditer(text)
+        ]
 
 
 class BearerTokenDetector(BaseDetector):
 
-    NAME = "oauth"
     PATTERN = re.compile(r"Bearer\s+[A-Za-z0-9_\-\.]{20,}")
+    PATTERN_NAME = "Bearer"
 
     def detect(self, text):
-        findings = []
-
+        candidates = []
         for match in self.PATTERN.finditer(text):
             token = match.group()
             value = token.split(" ", 1)[1]
-            findings.append(
-                Finding(
-                    detector=self.NAME,
-                    secret_type="BEARER_TOKEN",
+            candidates.append(
+                Candidate(
                     value=value,
                     start=match.start() + len("Bearer "),
                     end=match.end(),
-                    replacement="<BEARER_TOKEN>",
+                    pattern_name=self.PATTERN_NAME,
                 )
             )
-
-        return findings
+        return candidates
 
 
 class OAuthTokenDetector(BaseDetector):
 
-    NAME = "oauth"
     PATTERN = re.compile(r"OAuth\s+[A-Za-z0-9_\-\.]{20,}")
+    PATTERN_NAME = "OAuth"
 
     def detect(self, text):
-        findings = []
-
+        candidates = []
         for match in self.PATTERN.finditer(text):
             token = match.group()
             value = token.split(" ", 1)[1]
-            findings.append(
-                Finding(
-                    detector=self.NAME,
-                    secret_type="OAUTH_TOKEN",
+            candidates.append(
+                Candidate(
                     value=value,
                     start=match.start() + len("OAuth "),
                     end=match.end(),
-                    replacement="<OAUTH_TOKEN>",
+                    pattern_name=self.PATTERN_NAME,
                 )
             )
-
-        return findings
+        return candidates

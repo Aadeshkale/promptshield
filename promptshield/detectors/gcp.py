@@ -1,132 +1,98 @@
 """
-GCP secret detectors.
+GCP Pattern Detectors.
 
-Detects:
-  GCP API Key           AIzaSy...
-  GCP OAuth Secret      GOCSPX-...
-  GCP SA Key (PEM)      -----BEGIN PRIVATE KEY-----
-  GCP OAuth Token       ya29....
-  GCP Refresh Token     1//...
+Stage 1: Pure regex matchers.
+Return Candidate objects for classification in later stages.
 """
 
 import re
 
-from promptshield.models import Finding
 from promptshield.detectors.base import BaseDetector
+from promptshield.models import Candidate
 
 
 class GCPAPIKeyDetector(BaseDetector):
 
-    NAME = "gcp"
     PATTERN = re.compile(r"AIza[0-9A-Za-z\-_]{35}")
+    PATTERN_NAME = "AIza"
 
     def detect(self, text):
-        findings = []
-
-        for match in self.PATTERN.finditer(text):
-            findings.append(
-                Finding(
-                    detector=self.NAME,
-                    secret_type="GCP_API_KEY",
-                    value=match.group(),
-                    start=match.start(),
-                    end=match.end(),
-                    replacement="<GCP_API_KEY>",
-                )
+        return [
+            Candidate(
+                value=match.group(),
+                start=match.start(),
+                end=match.end(),
+                pattern_name=self.PATTERN_NAME,
             )
-
-        return findings
+            for match in self.PATTERN.finditer(text)
+        ]
 
 
 class GCPOAuthSecretDetector(BaseDetector):
 
-    NAME = "gcp"
     PATTERN = re.compile(r"GOCSPX-[0-9A-Za-z\-_]{28}")
+    PATTERN_NAME = "GOCSPX"
 
     def detect(self, text):
-        findings = []
-
-        for match in self.PATTERN.finditer(text):
-            findings.append(
-                Finding(
-                    detector=self.NAME,
-                    secret_type="GCP_OAUTH_SECRET",
-                    value=match.group(),
-                    start=match.start(),
-                    end=match.end(),
-                    replacement="<GCP_OAUTH_SECRET>",
-                )
+        return [
+            Candidate(
+                value=match.group(),
+                start=match.start(),
+                end=match.end(),
+                pattern_name=self.PATTERN_NAME,
             )
-
-        return findings
+            for match in self.PATTERN.finditer(text)
+        ]
 
 
 class GCPServiceAccountKeyDetector(BaseDetector):
 
-    NAME = "gcp"
     PATTERN = re.compile(
         r"-----BEGIN PRIVATE KEY-----[A-Za-z0-9/+=\s]{20,}-----END PRIVATE KEY-----"
     )
+    PATTERN_NAME = "PRIVATE_KEY"
 
     def detect(self, text):
-        findings = []
-
-        for match in self.PATTERN.finditer(text):
-            findings.append(
-                Finding(
-                    detector=self.NAME,
-                    secret_type="GCP_SA_KEY",
-                    value=match.group(),
-                    start=match.start(),
-                    end=match.end(),
-                    replacement="<GCP_SA_KEY>",
-                )
+        return [
+            Candidate(
+                value=match.group(),
+                start=match.start(),
+                end=match.end(),
+                pattern_name=self.PATTERN_NAME,
             )
-
-        return findings
+            for match in self.PATTERN.finditer(text)
+        ]
 
 
 class GCPOAuthAccessTokenDetector(BaseDetector):
 
-    NAME = "gcp"
     PATTERN = re.compile(r"ya29\.[0-9A-Za-z\-_]{40,}")
+    PATTERN_NAME = "ya29"
 
     def detect(self, text):
-        findings = []
-
-        for match in self.PATTERN.finditer(text):
-            findings.append(
-                Finding(
-                    detector=self.NAME,
-                    secret_type="GCP_OAUTH_TOKEN",
-                    value=match.group(),
-                    start=match.start(),
-                    end=match.end(),
-                    replacement="<GCP_OAUTH_TOKEN>",
-                )
+        return [
+            Candidate(
+                value=match.group(),
+                start=match.start(),
+                end=match.end(),
+                pattern_name=self.PATTERN_NAME,
             )
-
-        return findings
+            for match in self.PATTERN.finditer(text)
+        ]
 
 
 class GCPRefreshTokenDetector(BaseDetector):
 
-    NAME = "gcp"
     PATTERN = re.compile(r"1//[0-9A-Za-z\-_]{40,}")
+    PATTERN_NAME = "1//"
 
     def detect(self, text):
-        findings = []
-
-        for match in self.PATTERN.finditer(text):
-            findings.append(
-                Finding(
-                    detector=self.NAME,
-                    secret_type="GCP_REFRESH_TOKEN",
-                    value=match.group(),
-                    start=match.start(),
-                    end=match.end(),
-                    replacement="<GCP_REFRESH_TOKEN>",
-                )
+        return [
+            Candidate(
+                value=match.group(),
+                start=match.start(),
+                end=match.end(),
+                pattern_name=self.PATTERN_NAME,
             )
-
-        return findings
+            for match in self.PATTERN.finditer(text)
+        ]

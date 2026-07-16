@@ -12,19 +12,19 @@ shield = PromptShield()
 text = """
 Connect to my GCP project using these credentials.
 
-API Key:
+GCP API Key:
 AIzaSyDExample1234567890abcdefghijklmnop
 
-OAuth Client Secret:
+GCP OAuth Client Secret:
 GOCSPX-AbCdEfGhIjKlMnOpQrStUvWxYz1234
 
-Access Token:
+GCP Access Token:
 ya29.a0AfH6SMBx1234567890abcdefghijklmnopqrstuvwx
 
-Refresh Token:
+GCP Refresh Token:
 1//0aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890abcdefghijklmnop
 
-Can you list all buckets in my project?
+Can you list all buckets in my GCP project?
 
 {
   "type": "service_account",
@@ -47,4 +47,9 @@ print()
 print("=" * 50)
 print("Findings")
 for finding in result.findings:
-    print(finding)
+    print(f"  {finding.secret_type}")
+    print(f"    detector: {finding.detector}")
+    print(f"    confidence: {finding.confidence:.2f}")
+    print(f"    specificity: {finding.specificity}")
+    print(f"    value: {finding.value[:30]}...")
+    print()

@@ -1,5 +1,5 @@
 """
-Simple example.
+AWS credentials example.
 
 Run from project root:
   python3 examples/aws_example.py
@@ -51,4 +51,9 @@ print()
 print("=" * 50)
 print("Findings")
 for finding in result.findings:
-    print(finding)
+    print(f"  {finding.secret_type}")
+    print(f"    detector: {finding.detector}")
+    print(f"    confidence: {finding.confidence:.2f}")
+    print(f"    specificity: {finding.specificity}")
+    print(f"    value: {finding.value[:30]}...")
+    print()

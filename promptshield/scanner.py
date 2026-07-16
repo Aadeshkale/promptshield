@@ -1,23 +1,31 @@
 """
-Scanner is the orchestrator.
+Scanner orchestrates the three-stage detection pipeline.
 
-It does NOT know AWS regex.
-It does NOT know GitHub regex.
-It simply asks every detector to scan.
-
-Workflow
+Stage 1: Pattern Detection (detectors → candidates)
+Stage 2: Context Enrichment (candidates → candidates + context)
+Stage 3: Classification (candidates + context → findings)
+Stage 4: Overlap Resolution (findings → resolved findings)
 
 Input
    ↓
-Detectors
+Detectors (regex → Candidates)
    ↓
-Policies
+Context Enricher (Candidates → Candidates + Context)
+   ↓
+Classifiers (Candidates + Context → Findings)
+   ↓
+Policy (overlap resolution)
    ↓
 Redactor
    ↓
 ScanResult
 """
 
+from promptshield.context import ContextEnricher
+from promptshield.classifiers.gcp import GCPClassifier
+from promptshield.classifiers.aws import AWSClassifier
+from promptshield.classifiers.oauth import OAuthClassifier
+from promptshield.classifiers.generic import GenericClassifier
 from promptshield.models import ScanResult
 from promptshield.policies.default import DefaultPolicy
 from promptshield.redactors.default import DefaultRedactor
@@ -27,17 +35,41 @@ class Scanner:
 
     def __init__(self, detectors):
         self.detectors = detectors
+        self.enricher = ContextEnricher()
+        self.classifiers = [
+            GCPClassifier(),
+            AWSClassifier(),
+            OAuthClassifier(),
+            GenericClassifier(),
+        ]
         self.policy = DefaultPolicy()
         self.redactor = DefaultRedactor()
 
     def scan(self, text):
-        findings = []
-
+        # Stage 1: Pattern Detection
+        candidates = []
         for detector in self.detectors:
-            findings.extend(detector.detect(text))
+            candidates.extend(detector.detect(text))
 
+        # Stage 2: Context Enrichment
+        enriched = [
+            (candidate, self.enricher.enrich(text, candidate))
+            for candidate in candidates
+        ]
+
+        # Stage 3: Classification
+        findings = []
+        for candidate, context in enriched:
+            for classifier in self.classifiers:
+                finding = classifier.classify(candidate, context)
+                if finding:
+                    findings.append(finding)
+                    break
+
+        # Stage 4: Overlap Resolution
         findings = self.policy.apply(findings)
 
+        # Redactor
         redacted = self.redactor.redact(text, findings)
 
         return ScanResult(

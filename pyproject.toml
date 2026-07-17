@@ -8,6 +8,10 @@ version = "0.1.0"
 description = "prompt security library for AI applications. It inspects prompts before they reach Large Language Models (LLMs), detects secrets and sensitive information, applies configurable security policies, and returns a sanitized prompt that can be safely sent to providers such as OpenAI, Claude, Gemini, and Ollama"
 requires-python = ">=3.10"
 
+[project.optional-dependencies]
+injection = ["transformers>=4.30", "torch>=2.0"]
+all = ["promptshield[injection]"]
+
 [tool.setuptools.packages.find]
 include = ["promptshield*"]
 exclude = ["examples*"]

@@ -78,11 +78,24 @@ from promptshield.detectors.twilio import (
     TwilioAuthTokenDetector,
 )
 from promptshield.scanner import Scanner
+from promptshield.exceptions import InjectionDetected
 
 
 class PromptShield:
 
-    def __init__(self, detectors=None):
+    def __init__(self, detectors=None, use_injection=False, injection_threshold=0.7, injection_mode="flag"):
+
+        self.use_injection = use_injection
+        self.injection_threshold = injection_threshold
+        self.injection_mode = injection_mode
+        self.injection_scanner = None
+
+        if use_injection:
+            from promptshield.injection import InjectionScanner
+            self.injection_scanner = InjectionScanner(
+                threshold=injection_threshold,
+                mode=injection_mode,
+            )
 
         self.scanner = Scanner(
             detectors or [
@@ -140,4 +153,15 @@ class PromptShield:
 
     def scan(self, text):
 
-        return self.scanner.scan(text)
+        result = self.scanner.scan(text)
+
+        if self.use_injection and self.injection_scanner:
+            result.injection = self.injection_scanner.scan(text)
+
+            if result.injection.blocked and self.injection_mode == "block":
+                raise InjectionDetected(
+                    threat_score=result.injection.threat_score,
+                    patterns_matched=result.injection.patterns_matched,
+                )
+
+        return result

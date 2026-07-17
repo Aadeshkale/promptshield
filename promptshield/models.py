@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import Dict, List, Optional
 
 
 @dataclass
@@ -45,9 +45,21 @@ class Finding:
 
 
 @dataclass
+class InjectionResult:
+    """Result from prompt injection detection."""
+
+    threat_score: float
+    blocked: bool
+    scores: Dict[str, float]
+    patterns_matched: List[str]
+    action: str  # "flag", "redact", or "block"
+
+
+@dataclass
 class ScanResult:
     """Final result returned by PromptShield."""
 
     original_text: str
     redacted_text: str
     findings: List[Finding]
+    injection: Optional[InjectionResult] = None

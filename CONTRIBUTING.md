@@ -84,20 +84,99 @@ class MyClassifier(BaseClassifier):
 1. Create `promptshield/detectors/<provider>.py` with one or more `BaseDetector` subclasses.
 2. Create `promptshield/classifiers/<provider>.py` with a `BaseClassifier` subclass mapping each `PATTERN_NAME`.
 3. Create `examples/<provider>_example.py` to verify detection.
-4. Register the detector(s) in `promptshield/shield.py`.
+4. Register the detector(s) in `promptshield/shield.py` (for default activation) or leave opt-in.
 5. Register the classifier in `promptshield/scanner.py`.
 6. Run the example: `python3 examples/<provider>_example.py`.
 
+## PII Detection
+
+PII detection uses the same 3-stage pipeline as secret detection. PII detectors are **opt-in** — users pass them in the `detectors` list rather than enabling them by default.
+
+### Built-in PII Detectors
+
+| Detector Class | `pattern_name` | `secret_type` | Replacement |
+|---|---|---|---|
+| `EmailDetector` | `EMAIL_ADDRESS` | `EMAIL_ADDRESS` | `<EMAIL>` |
+| `PhoneDetector` | `PHONE_NUMBER` | `PHONE_NUMBER` | `<PHONE>` |
+| `SSNDetector` | `SSN` | `SSN` | `<SSN>` |
+| `CreditCardDetector` | `CREDIT_CARD` | `CREDIT_CARD` | `<CREDIT_CARD>` |
+| `IPv4Detector` | `IP_ADDRESS` | `IP_ADDRESS` | `<IP_ADDRESS>` |
+| `IPv6Detector` | `IPV6_ADDRESS` | `IPV6_ADDRESS` | `<IPV6_ADDRESS>` |
+| `USStreetAddressDetector` | `US_STREET_ADDRESS` | `US_STREET_ADDRESS` | `<ADDRESS>` |
+
+### Adding a New PII Detector
+
+Follow the same pattern as secret detectors:
+
+```python
+# promptshield/detectors/my_pii.py
+import re
+from promptshield.detectors.base import BaseDetector
+from promptshield.models import Candidate
+
+class MyPIIDetector(BaseDetector):
+    PATTERN = re.compile(r"...")
+    PATTERN_NAME = "MY_PII_TYPE"
+
+    def detect(self, text):
+        return [
+            Candidate(
+                value=match.group(),
+                start=match.start(),
+                end=match.end(),
+                pattern_name=self.PATTERN_NAME,
+            )
+            for match in self.PATTERN.finditer(text)
+        ]
+```
+
+Then create a classifier entry in `promptshield/classifiers/pii.py`:
+
+```python
+# Add to PIIClassifier.PATTERNS dict:
+"MY_PII_TYPE": {
+    "secret_type": "MY_PII_TYPE",
+    "base_confidence": 0.70,
+    "base_specificity": 60,
+    "replacement": "<MY_PII>",
+},
+```
+
+### PII Usage Examples
+
+```python
+from promptshield import PromptShield
+from promptshield.detectors.pii import EmailDetector, SSNDetector
+
+# Opt-in PII detection
+shield = PromptShield(detectors=[EmailDetector(), SSNDetector()])
+result = shield.scan("Email john@x.com, SSN 234-56-7890")
+# result.redacted_text = "Email <EMAIL>, SSN <SSN>"
+```
+
+### PII Validation Rules
+
+- **Email**: RFC 5322 simplified regex, max 64 chars local part
+- **Phone**: US formats only, excludes 555/000/111 area codes
+- **SSN**: Area code 001-899, group 01-99, serial 0001-9999
+- **Credit card**: Luhn algorithm validation, network identification (Visa/MC/Amex/Discover/JCB)
+- **IPv4**: Octet range 0-255, excludes 0.x.x.x
+- **IPv6**: Colon-hex notation, minimum 3 groups
+- **Address**: Number + street name + optional city/state/zip
+
 ## Adding a Backend
 
-PromptShield supports two types of pluggable backends:
+PromptShield supports three types of pluggable backends: **secret scanners**, **PII detectors**, and **injection protectors**. PII and secret backends share the same `BackendScanner` ABC and run through the same `backends=` parameter.
 
 | Type | ABC | Returns | Param | Purpose |
 |---|---|---|---|---|
 | Secret scanner | `BackendScanner` | `List[Finding]` | `backends=` | Detect secrets, API keys, credentials |
+| PII detection | `BackendScanner` | `List[Finding]` | `backends=` | Detect PII (emails, names, SSNs, etc.) |
 | Injection protection | `InjectionBackend` | `InjectionResult` | `injection_backends=` | Detect prompt injection, jailbreaks |
 
-Both are optional. Users pick exactly which backends to enable.
+PII backends use the same `BackendScanner` ABC as secret scanner backends — they all go through `backends=` and run in parallel.
+
+All backends are optional. Users pick exactly which backends to enable.
 
 ### Adding a Secret Scanner Backend
 
@@ -258,6 +337,109 @@ print(result.injection.blocked)
 print(result.injection.patterns_matched)
 ```
 
+### Adding a PII Backend
+
+A PII backend wraps a third-party PII detection library and produces `Finding` objects. PII backends use the same `BackendScanner` ABC as secret scanner backends — they go through `backends=` and run in parallel with secret backends.
+
+**Built-in PII Backend: `PresidioPIIBackend`**
+
+Wraps Microsoft Presidio for NER-based PII detection. Supports 30+ entity types across multiple languages.
+
+```python
+from promptshield import PromptShield
+from promptshield.backends import PresidioPIIBackend
+
+# Detect all PII types
+shield = PromptShield(backends=[PresidioPIIBackend()])
+
+# Detect specific PII types only (reduces false positives)
+shield = PromptShield(backends=[
+    PresidioPIIBackend(entities=["EMAIL_ADDRESS", "PERSON", "US_SSN", "CREDIT_CARD"]),
+])
+
+# Adjust sensitivity (lower = more detections, more false positives)
+shield = PromptShield(backends=[
+    PresidioPIIBackend(score_threshold=0.3),
+])
+
+# Non-English text
+shield = PromptShield(backends=[
+    PresidioPIIBackend(language="es"),
+])
+```
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `score_threshold` | `float` | `0.5` | Minimum Presidio confidence to return |
+| `language` | `str` | `"en"` | Language code for NER analysis |
+| `entities` | `List[str]` or `None` | `None` | Filter specific entity types (None = all) |
+| `confidence` | `float` | `0.80` | Confidence value for returned findings |
+| `specificity` | `int` | `85` | Specificity value for returned findings |
+
+**Presidio entity types** (common ones):
+
+| Entity Type | Description |
+|---|---|
+| `PERSON` | Person name (NER-based) |
+| `EMAIL_ADDRESS` | Email address |
+| `PHONE_NUMBER` | Phone number |
+| `US_SSN` | US Social Security Number |
+| `CREDIT_CARD` | Credit card number (with Luhn check) |
+| `IP_ADDRESS` | IPv4 or IPv6 address |
+| `LOCATION` | Physical location (NER-based) |
+| `DATE_TIME` | Date or time reference |
+| `NRP` | Nationality, religious, or political group |
+| `MEDICAL_LICENSE` | Medical license number |
+| `IBAN_CODE` | International Bank Account Number |
+| `UK_NHS` | UK National Health Service number |
+
+Requires: `pip install presidio-analyzer`
+
+**Adding a Custom PII Backend**
+
+Follow the same pattern as secret scanner backends:
+
+```python
+import logging
+from typing import List
+
+from promptshield.backends.base import BackendScanner
+from promptshield.models import Finding
+
+log = logging.getLogger(__name__)
+
+
+class MyPIIBackend(BackendScanner):
+    """Wrap my external PII scanner."""
+
+    def scan(self, text: str) -> List[Finding]:
+        try:
+            import my_pii_scanner
+        except ImportError:
+            log.warning("my-pii-scanner not installed")
+            return []
+
+        findings: List[Finding] = []
+        for result in my_pii_scanner.detect(text):
+            findings.append(Finding(
+                detector="my-pii-scanner",
+                secret_type=result.type,       # e.g. "EMAIL_ADDRESS"
+                value=result.value,
+                start=result.start,
+                end=result.end,
+                replacement=f"<{result.type}>",
+                confidence=result.confidence,
+                specificity=80,
+            ))
+        return findings
+```
+
+Register in `promptshield/backends/__init__.py` and pass via `backends=`:
+
+```python
+shield = PromptShield(backends=[MyPIIBackend()])
+```
+
 ### Using Multiple Backends
 
 Backends run in parallel. Results are merged automatically:
@@ -269,6 +451,7 @@ Backends run in parallel. Results are merged automatically:
 from promptshield import PromptShield
 from promptshield.backends import (
     DetectSecretsBackend,
+    PresidioPIIBackend,
     PromptInjectionDefenseBackend,
     MyScannerBackend,
 )
@@ -276,6 +459,7 @@ from promptshield.backends import (
 shield = PromptShield(
     backends=[
         DetectSecretsBackend(),
+        PresidioPIIBackend(score_threshold=0.5),
         MyScannerBackend(),
     ],
     injection_backends=[

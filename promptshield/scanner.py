@@ -46,6 +46,7 @@ from promptshield.classifiers.ssh import SSHClassifier
 from promptshield.classifiers.stripe import StripeClassifier
 from promptshield.classifiers.telegram import TelegramClassifier
 from promptshield.classifiers.twilio import TwilioClassifier
+from promptshield.classifiers.pii import PIIClassifier
 from promptshield.models import ScanResult
 from promptshield.policies.default import DefaultPolicy
 from promptshield.redactors.default import DefaultRedactor
@@ -82,6 +83,7 @@ class Scanner:
             TwilioClassifier(),
             OAuthClassifier(),
             GenericClassifier(),
+            PIIClassifier(),
         ]
         self.policy = DefaultPolicy()
         self.redactor = DefaultRedactor()

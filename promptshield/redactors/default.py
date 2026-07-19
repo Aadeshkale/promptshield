@@ -10,10 +10,17 @@ They only report:
 Redactor performs the actual replacement.
 """
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class DefaultRedactor:
 
     def redact(self, text, findings):
+        if not findings:
+            return text
+
         # IMPORTANT: Replace from end of string.
         # Otherwise indexes become invalid.
         findings = sorted(
@@ -23,6 +30,10 @@ class DefaultRedactor:
         )
 
         for finding in findings:
+            logger.debug(
+                "Redacting %s at [%d:%d] with %s",
+                finding.secret_type, finding.start, finding.end, finding.replacement,
+            )
             text = (
                 text[:finding.start]
                 + finding.replacement

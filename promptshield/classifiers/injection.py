@@ -4,8 +4,12 @@ Injection Classifiers.
 Classifies injection candidates using pattern matching and optional ML.
 """
 
+import logging
+
 from promptshield.classifiers import BaseClassifier
 from promptshield.models import Candidate, Context, Finding
+
+logger = logging.getLogger(__name__)
 
 
 INJECTION_PATTERNS = {
@@ -105,13 +109,19 @@ class InjectionMLClassifier:
             return True
         try:
             from transformers import pipeline
+            logger.info("Loading ML injection classifier: %s", self._model_name)
             self._classifier = pipeline(
                 "text-classification",
                 model=self._model_name,
                 top_k=None,
             )
+            logger.info("ML injection classifier loaded successfully")
             return True
-        except (ImportError, OSError):
+        except ImportError:
+            logger.debug("transformers not installed, ML classifier unavailable")
+            return False
+        except OSError as e:
+            logger.warning("ML classifier model load failed: %s", e)
             return False
 
     def is_available(self):

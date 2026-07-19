@@ -10,6 +10,7 @@ Layers:
   3. ML classifier (optional, ~50ms, requires transformers)
 """
 
+import logging
 import math
 from collections import Counter
 from typing import List
@@ -20,6 +21,8 @@ from promptshield.context import ContextEnricher
 from promptshield.policies.default import DefaultPolicy
 from promptshield.redactors.default import DefaultRedactor
 from promptshield.models import InjectionResult
+
+logger = logging.getLogger(__name__)
 
 
 LAYER_WEIGHTS = {
@@ -48,25 +51,36 @@ class InjectionScanner:
         self.policy = DefaultPolicy()
         self.redactor = DefaultRedactor()
 
+        logger.info(
+            "InjectionScanner initialized (threshold=%.2f, mode=%s, ml_available=%s)",
+            threshold, mode, self.ml_classifier.is_available(),
+        )
+
     def scan(self, text):
         scores = {}
         patterns_matched = []
 
+        logger.debug("Injection scan start (%d chars)", len(text))
+
         # Layer 1: Pattern matching
         pattern_score = self._check_patterns(text, patterns_matched)
         scores["pattern"] = pattern_score
+        logger.debug("Layer 1 (pattern): score=%.4f, patterns=%s", pattern_score, patterns_matched)
 
         # Layer 2: Entropy analysis
         entropy_score = self._check_entropy(text)
         scores["entropy"] = entropy_score
+        logger.debug("Layer 2 (entropy): score=%.4f", entropy_score)
 
         # Layer 3: ML classification (if available)
         ml_available = self.ml_classifier.is_available()
         if ml_available:
             ml_score = self.ml_classifier.classify(text)
             scores["ml"] = ml_score
+            logger.debug("Layer 3 (ML): score=%.4f", ml_score)
         else:
             scores["ml"] = 0.0
+            logger.debug("Layer 3 (ML): unavailable, score=0.0")
 
         # Weighted ensemble (redistribute ML weight when unavailable)
         if ml_available:
@@ -86,6 +100,12 @@ class InjectionScanner:
         )
 
         blocked = total_score >= self.threshold
+
+        logger.debug(
+            "Injection scan complete: threat=%.4f, blocked=%s (threshold=%.2f, weights=%s)",
+            total_score, blocked, self.threshold,
+            {k: round(v, 2) for k, v in weights.items()},
+        )
 
         return InjectionResult(
             threat_score=round(total_score, 4),

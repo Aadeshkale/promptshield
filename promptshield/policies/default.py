@@ -10,9 +10,12 @@ Resolves overlapping findings using metadata:
   4. Earlier position wins
 """
 
+import logging
 from typing import List
 
 from promptshield.models import Finding
+
+logger = logging.getLogger(__name__)
 
 
 class DefaultPolicy:
@@ -42,5 +45,10 @@ class DefaultPolicy:
             )
             if not overlaps:
                 resolved.append(finding)
+            else:
+                logger.debug(
+                    "Policy dropped overlapping finding: %s at [%d:%d]",
+                    finding.secret_type, finding.start, finding.end,
+                )
 
         return sorted(resolved, key=lambda f: f.start)

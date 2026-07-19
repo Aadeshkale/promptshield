@@ -7,7 +7,7 @@
                      │
      ┌───────────────┼────────────────┐
      │               │                │
- Secret Scan     PII Scan     Prompt Injection
+ Secret Scan   Prompt Injection    PII Scan 
      │               │                │
      └───────────────┼────────────────┘
                      │

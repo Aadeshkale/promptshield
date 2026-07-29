@@ -1,0 +1,44 @@
+# LiteLLM proxy configuration with PromptShield protection.
+# 
+# Start the proxy:
+#   litellm --config examples/litellm_proxy_config.yaml --port 4000
+#
+# Then send requests as if it were OpenAI:
+#   curl http://localhost:4000/v1/chat/completions \
+#     -H "Content-Type: application/json" \
+#     -d '{"model": "gpt-4", "messages": [{"role": "user", "content": "Hello"}]}'
+
+model_list:
+  - model_name: gpt-4
+    litellm_params:
+      model: openai/gpt-4
+      api_key: os.environ/OPENAI_API_KEY
+
+  - model_name: gpt-4o
+    litellm_params:
+      model: openai/gpt-4o
+      api_key: os.environ/OPENAI_API_KEY
+
+  - model_name: claude-3-opus
+    litellm_params:
+      model: anthropic/claude-3-opus-20240229
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+  - model_name: claude-3-sonnet
+    litellm_params:
+      model: anthropic/claude-3-sonnet-20240229
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+  - model_name: gemini-pro
+    litellm_params:
+      model: gemini/gemini-pro
+      api_key: os.environ/GEMINI_API_KEY
+
+litellm_settings:
+  callbacks: promptshield.integrations.litellm.PromptShieldGuard
+
+  # Optional: override PromptShield defaults
+  # callback_args:
+  #   PromptShieldGuard:
+  #     injection_mode: redact
+  #     injection_threshold: 0.85

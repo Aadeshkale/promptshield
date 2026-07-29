@@ -505,6 +505,39 @@ result = shield.scan(text)
 - `BitbucketOAuthConsumerKeyDetector` matches any 32-char alphanumeric. Exclude all-hex strings to avoid Datadog key false positives (see `promptshield/detectors/bitbucket.py:47`).
 - For ambiguous patterns (UUIDs, 32-40 char random strings), use a **context-requiring classifier** — return `None` if no keyword matches.
 
+## Adding an Integration
+
+PromptShield integrations live in `promptshield/integrations/` and provide ready-to-use adapters for popular proxy frameworks.
+
+### Integration Types
+
+| Type | Base | When to use |
+|---|---|---|
+| LiteLLM callback | `litellm.integrations.custom_logger.CustomLogger` | User wants to run a LiteLLM proxy with zero-code setup |
+| Generic middleware | none (standalone class) | User wants to build a custom proxy or use a framework not in the supported list |
+
+### Adding a LiteLLM Callback
+
+1. Create `promptshield/integrations/<name>.py` with a class inheriting from `CustomLogger`.
+2. Implement `async_pre_call_hook` to intercept request bodies, scan with `PromptShield`, and either redact or raise.
+3. Add the class import to the module docstring for discoverability.
+
+### Adding a Generic Middleware
+
+1. Create `promptshield/integrations/<name>.py` with a standalone class.
+2. Accept a `PromptShield` instance or its constructor parameters in `__init__`.
+3. Provide a `scan_messages()` method that returns `(modified_messages, findings, injection_result)`.
+4. Provide a `check_blocked()` method that returns `None` or an error string.
+5. Add the class import to `promptshield/integrations/__init__.py`.
+
+### Integration Conventions
+
+- **No framework imports in the module's top level** — wrap imports inside methods or use try/except for optional dependencies.
+- Always include a module-level docstring with usage examples.
+- Create an example config file in `examples/` if the integration uses one (e.g., YAML).
+- Create an example script in `examples/` demonstrating programmatic usage.
+- Document the integration in `readme.md` under the Integrations section.
+
 ## Project Conventions
 
 - **No comments** in production code unless absolutely necessary for clarity.

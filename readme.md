@@ -2,20 +2,23 @@
 
 **PromptShield** is an open-source prompt security library for AI applications. It inspects prompts before they reach Large Language Models (LLMs), detects secrets and sensitive information, applies configurable security policies, and returns a sanitized prompt that can be safely sent to providers such as OpenAI, Claude, Gemini, and Ollama.
 
-```bash
+```
                PromptShield
                      │
      ┌───────────────┼────────────────┐
      │               │                │
- Secret Scan   Prompt Injection    PII Scan 
+ Secret Scan   Prompt Injection    PII Scan
      │               │                │
      └───────────────┼────────────────┘
                      │
               Policy Engine
                      │
-               Model Router
-                     │
-       OpenAI / Claude / Gemini / Ollama
+         ┌───────────┴───────────┐
+         │                       │
+   LiteLLM Proxy          Direct API
+   (Callback)              (Python lib)
+         │                       │
+   OpenAI / Claude / Gemini / Ollama
 ```
 
 ## Roadmap
@@ -28,7 +31,7 @@ PromptShield is developed in two stages:
    - Multi-layer prompt injection protection
    - Pluggable backend integrations
    - Policy engine with overlap resolution
-2. **Proxy** (future) — A transparent forward proxy. All traffic to LLM providers flows through it. Secrets, PII, and prompt injections are removed automatically — no application changes required.
+2. **Proxy** (available via LiteLLM integration) — Run PromptShield as a transparent forward proxy using the LiteLLM callback. All traffic to LLM providers flows through it. Secrets, PII, and prompt injections are removed automatically — no application changes required. See [Integrations](#integrations).
 
 ## Completed Features
 
@@ -47,7 +50,6 @@ PromptShield is developed in two stages:
 - AI Governance
 - Audit Logging
 - Multi-LLM Routing
-- Proxy Mode (transparent forward proxy)
 
 ## Supported Secrets
 
@@ -98,6 +100,63 @@ PII detectors are **opt-in** — pass them in the `detectors` list (see examples
 | `PromptInjectionDefenseBackend` | `prompt-injection-defense` | Injection | Prompt injection, jailbreaks, unsafe content |
 
 All backends are optional. Install with `pip install promptshield[backends]` or individually.
+
+## Integrations
+
+PromptShield ships with ready-to-use integrations that let you drop it into existing proxy infrastructure with zero boilerplate.
+
+### LiteLLM Proxy
+
+Add PromptShield to any LiteLLM proxy instance with one config line:
+
+```yaml
+# litellm_config.yaml
+model_list:
+  - model_name: gpt-4
+    litellm_params:
+      model: openai/gpt-4
+      api_key: os.environ/OPENAI_API_KEY
+
+litellm_settings:
+  callbacks: promptshield.integrations.litellm.PromptShieldGuard
+```
+
+```bash
+pip install promptshield[litellm]
+litellm --config litellm_config.yaml --port 4000
+```
+
+Every request through the proxy is scanned for secrets and prompt injections. Secrets are redacted automatically; flagged injections return a `403` before they reach the provider.
+
+### Custom Proxy (any framework)
+
+Use `ShieldMiddleware` if you need a custom proxy or want to integrate into a framework other than LiteLLM:
+
+```python
+from promptshield.integrations.shield_middleware import ShieldMiddleware
+
+guard = ShieldMiddleware()
+
+# In your route handler:
+messages, findings, injection = guard.scan_messages(request_body["messages"])
+error = guard.check_blocked(injection)
+if error:
+    return {"error": error}, 403
+# Forward with redacted messages
+```
+
+The `ShieldMiddleware` is framework-agnostic — it works with FastAPI, Flask, aiohttp, or any other web framework.
+
+See `examples/custom_proxy_example.py` for a complete FastAPI example.
+
+### Available Integrations
+
+| Integration | Module | Purpose |
+|---|---|---|
+| `PromptShieldGuard` | `promptshield.integrations.litellm` | LiteLLM proxy callback |
+| `ShieldMiddleware` | `promptshield.integrations.shield_middleware` | Generic middleware for custom proxies |
+
+---
 
 ## Quickstart
 

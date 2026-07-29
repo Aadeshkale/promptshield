@@ -13,10 +13,10 @@
                      │
               Policy Engine
                      │
-         ┌───────────┴───────────┐
-         │                       │
-   LiteLLM Proxy          Direct API
-   (Callback)              (Python lib)
+          ┌───────────┴───────────┐
+          │                       │
+      Proxy                  Direct API
+ (LiteLLM / Custom)          (Python lib)
          │                       │
    OpenAI / Claude / Gemini / Ollama
 ```
@@ -31,7 +31,7 @@ PromptShield is developed in two stages:
    - Multi-layer prompt injection protection
    - Pluggable backend integrations
    - Policy engine with overlap resolution
-2. **Proxy** (available via LiteLLM integration) — Run PromptShield as a transparent forward proxy using the LiteLLM callback. All traffic to LLM providers flows through it. Secrets, PII, and prompt injections are removed automatically — no application changes required. See [Integrations](#integrations).
+2. **Proxy** — Run PromptShield as a transparent forward proxy. All traffic to LLM providers flows through it. Secrets, PII, and prompt injections are removed automatically — no application changes required. Choose between the LiteLLM callback (zero-config proxy) or the generic `ShieldMiddleware` (build your own proxy). See [Integrations](#integrations).
 
 ## Completed Features
 
@@ -105,7 +105,11 @@ All backends are optional. Install with `pip install promptshield[backends]` or 
 
 PromptShield ships with ready-to-use integrations that let you drop it into existing proxy infrastructure with zero boilerplate.
 
-### LiteLLM Proxy
+### Proxy Mode
+
+PromptShield intercepts and protects LLM requests through two integration paths:
+
+#### LiteLLM (recommended for most users)
 
 Add PromptShield to any LiteLLM proxy instance with one config line:
 
@@ -128,9 +132,9 @@ litellm --config litellm_config.yaml --port 4000
 
 Every request through the proxy is scanned for secrets and prompt injections. Secrets are redacted automatically; flagged injections return a `403` before they reach the provider.
 
-### Custom Proxy (any framework)
+#### Custom Proxy (any framework)
 
-Use `ShieldMiddleware` if you need a custom proxy or want to integrate into a framework other than LiteLLM:
+Use `ShieldMiddleware` to build your own proxy — it works with FastAPI, Flask, aiohttp, or any other web framework:
 
 ```python
 from promptshield.integrations.shield_middleware import ShieldMiddleware
@@ -144,8 +148,6 @@ if error:
     return {"error": error}, 403
 # Forward with redacted messages
 ```
-
-The `ShieldMiddleware` is framework-agnostic — it works with FastAPI, Flask, aiohttp, or any other web framework.
 
 See `examples/custom_proxy_example.py` for a complete FastAPI example.
 

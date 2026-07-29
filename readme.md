@@ -23,19 +23,31 @@
 PromptShield is developed in two stages:
 
 1. **Library** (current) — Embeddable Python library that scans and sanitizes prompts before they reach any LLM.
+   - Secret detection across 20+ providers
+   - Opt-in PII detection with validation
+   - Multi-layer prompt injection protection
+   - Pluggable backend integrations
+   - Policy engine with overlap resolution
 2. **Proxy** (future) — A transparent forward proxy. All traffic to LLM providers flows through it. Secrets, PII, and prompt injections are removed automatically — no application changes required.
 
-## Features
+## Completed Features
 
-- Secret Detection
-- PII Detection
-- Prompt Injection Protection
-- Jailbreak Detection
+- Secret Detection (47 built-in detectors across 20+ providers)
+- PII Detection (7 opt-in detectors with Luhn, RFC, and range validation)
+- Prompt Injection Protection (regex patterns + entropy analysis + optional ML classifier)
+- Jailbreak Detection (via prompt-injection-defense backend)
+- Policy Engine (overlap resolution by verified, specificity, and confidence)
+- Context Enrichment (surrounding text, line number, env var, and header detection)
+- Backend Integrations (detect-secrets, Microsoft Presidio, prompt-injection-defense)
+- Logging & Exceptions (structured logging, 4 custom exception types)
+
+## Planned
+
 - Response Filtering
 - AI Governance
-- Policy Engine
-- Audit Logs
+- Audit Logging
 - Multi-LLM Routing
+- Proxy Mode (transparent forward proxy)
 
 ## Supported Secrets
 
@@ -202,6 +214,8 @@ Install all backends: `pip install promptshield[backends]`
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+Currently there is no test suite, LICENSE file, or CI/CD configuration. Contributions that add any of these are especially welcome.
 
 ## License
 

@@ -13,7 +13,7 @@
                      │
               Policy Engine
                      │
-          ┌───────────┴───────────┐
+          ┌──────────┴───────-────┐
           │                       │
       Proxy                  Direct API
  (LiteLLM / Custom)          (Python lib)
@@ -43,6 +43,8 @@ PromptShield is developed in two stages:
 - Context Enrichment (surrounding text, line number, env var, and header detection)
 - Backend Integrations (detect-secrets, Microsoft Presidio, prompt-injection-defense)
 - Logging & Exceptions (structured logging, 4 custom exception types)
+
+- **LiteLLM Integration** ✅ **TESTED** - Zero-config callback interceptor for automatic credential protection
 
 ## Planned
 
@@ -272,6 +274,11 @@ if result.injection:
 ```
 
 Install all backends: `pip install promptshield[backends]`
+
+## Documentation
+
+- **[How PromptShield Works](HOW_PROMPTSHIELD_WORKS.md)** - Comprehensive guide explaining the architecture, callback interceptors, 4-stage detection pipeline, and credential removal process
+
 
 ## Contributing
 

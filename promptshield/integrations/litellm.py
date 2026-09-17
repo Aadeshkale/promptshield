@@ -4,7 +4,7 @@ LiteLLM integration for PromptShield.
 Usage in litellm_config.yaml:
 
     litellm_settings:
-      callbacks: promptshield.integrations.litellm.PromptShieldGuard
+      callbacks: [promptshield.integrations.litellm.proxy_handler_instance]
 
     # optional overrides:
     #   callback_args:
@@ -52,11 +52,12 @@ class PromptShieldGuard(CustomLogger):
         )
 
     async def async_pre_call_hook(
-        self, user_api_key_dict, cache, call_type, request_body
+        self, user_api_key_dict, cache, data, call_type
     ):
-        messages = request_body.get("messages", [])
+        # data contains the request body
+        messages = data.get("messages", [])
         if not messages:
-            return request_body
+            return data
 
         modified = list(messages)
         has_changes = False
@@ -87,6 +88,10 @@ class PromptShieldGuard(CustomLogger):
                 has_changes = True
 
         if has_changes:
-            request_body["messages"] = modified
+            data["messages"] = modified
 
-        return request_body
+        return data
+
+
+# Default instance for LiteLLM proxy configuration
+proxy_handler_instance = PromptShieldGuard()

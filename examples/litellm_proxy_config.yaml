@@ -33,9 +33,14 @@ model_list:
     litellm_params:
       model: gemini/gemini-pro
       api_key: os.environ/GEMINI_API_KEY
+  
+  - model_name: gemini-flash
+    litellm_params:
+      model: gemini/gemini-3.6-flash
+      api_key: os.environ/GEMINI_API_KEY
 
 litellm_settings:
-  callbacks: promptshield.integrations.litellm.PromptShieldGuard
+  callbacks: [promptshield.integrations.litellm.proxy_handler_instance]
 
   # Optional: override PromptShield defaults
   # callback_args:

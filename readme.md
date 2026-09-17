@@ -122,7 +122,7 @@ model_list:
       api_key: os.environ/OPENAI_API_KEY
 
 litellm_settings:
-  callbacks: promptshield.integrations.litellm.PromptShieldGuard
+  callbacks: [promptshield.integrations.litellm.proxy_handler_instance]
 ```
 
 ```bash
@@ -155,7 +155,8 @@ See `examples/custom_proxy_example.py` for a complete FastAPI example.
 
 | Integration | Module | Purpose |
 |---|---|---|
-| `PromptShieldGuard` | `promptshield.integrations.litellm` | LiteLLM proxy callback |
+| `proxy_handler_instance` | `promptshield.integrations.litellm` | LiteLLM proxy callback (pre-configured instance) |
+| `PromptShieldGuard` | `promptshield.integrations.litellm` | LiteLLM proxy callback (customizable class) |
 | `ShieldMiddleware` | `promptshield.integrations.shield_middleware` | Generic middleware for custom proxies |
 
 ---

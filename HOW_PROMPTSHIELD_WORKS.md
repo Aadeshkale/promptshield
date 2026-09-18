@@ -73,15 +73,15 @@ Your Application
 ┌─────────────────────────────────────┐
 │  LiteLLM Proxy                      │
 │                                     │
-│  ┌───────────────────────────────┐ │
-│  │  Callback Interceptor         │ │
-│  │  (Your security checkpoint)   │ │
-│  │                               │ │
-│  │  1. Receive request          │ │
-│  │  2. Check for credentials    │ │
-│  │  3. Remove if found          │ │
-│  │  4. Forward safe request     │ │
-│  └───────────────────────────────┘ │
+│  ┌───────────────────────────────┐  │
+│  │  Callback Interceptor         │  │
+│  │  (Your security checkpoint)   │  │
+│  │                               │  │
+│  │  1. Receive request           │  │
+│  │  2. Check for credentials     │  │
+│  │  3. Remove if found           │  │
+│  │  4. Forward safe request      │  │
+│  └───────────────────────────────┘  │
 │                                     │
 └─────────────────────────────────────┘
     ↓

@@ -175,28 +175,28 @@ Input Text
 ┌─────────────────────────────────────┐
 │ Stage 1: Pattern Detection          │
 │ 45+ Detectors scan with regex       │
-│ ↓                                    │
+│ ↓                                   │
 │ Candidates (potential secrets)      │
 └─────────────────────────────────────┘
     ↓
 ┌─────────────────────────────────────┐
 │ Stage 2: Context Enrichment         │
 │ Add surrounding text, line numbers  │
-│ ↓                                    │
+│ ↓                                   │
 │ Enriched Candidates                 │
 └─────────────────────────────────────┘
     ↓
 ┌─────────────────────────────────────┐
 │ Stage 3: Classification             │
 │ 23 Classifiers validate findings    │
-│ ↓                                    │
+│ ↓                                   │
 │ Findings (confirmed secrets)        │
 └─────────────────────────────────────┘
     ↓
 ┌─────────────────────────────────────┐
 │ Stage 4: Policy & Redaction         │
 │ Resolve overlaps + replace secrets  │
-│ ↓                                    │
+│ ↓                                   │
 │ Redacted Text (safe output)         │
 └─────────────────────────────────────┘
 ```

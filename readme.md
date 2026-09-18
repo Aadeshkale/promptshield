@@ -278,6 +278,7 @@ Install all backends: `pip install promptshield[backends]`
 ## Documentation
 
 - **[How PromptShield Works](HOW_PROMPTSHIELD_WORKS.md)** - Comprehensive guide explaining the architecture, callback interceptors, 4-stage detection pipeline, and credential removal process
+- **[Proxy Integration Guide](INTEGRATION_GUIDE.md.md)** - How to integrate PromptShield with any proxy system (FastAPI, Flask, Express, Nginx, custom proxies, etc.)
 
 
 ## Contributing

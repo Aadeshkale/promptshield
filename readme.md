@@ -286,7 +286,3 @@ Install all backends: `pip install promptshield[backends]`
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Currently there is no test suite, LICENSE file, or CI/CD configuration. Contributions that add any of these are especially welcome.
-
-## License
-
-Copyright (C) 2026 PromptShield Contributors. Licensed under AGPL-3.0-or-later.

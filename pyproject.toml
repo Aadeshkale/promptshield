@@ -7,14 +7,14 @@ name = "promptshield"
 version = "0.1.0"
 description = "Prompt security library: detects secrets, PII, and prompt injections before they reach any LLM"
 readme = "readme.md"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "Aadesh Kale" }]
 requires-python = ">=3.10"
 keywords = ["llm", "security", "secrets", "pii", "prompt-injection", "guardrails", "ai-security"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
